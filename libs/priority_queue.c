@@ -44,7 +44,7 @@ void heap_heapify(MinHeap* heap) {
 }
 
 void heap_siftup(MinHeap* heap, int i) {
-    while (heap->array[i] < heap->array[i / 2]) {
+    while (heap->array[i]->value < heap->array[i / 2]->value) {
         swap(heap->array, i, i / 2);
         i = i / 2;
     }
@@ -56,11 +56,11 @@ void heap_siftdown(MinHeap* heap, int i) {
         int l = 2 * i + 1;
         int r = 2 * i + 2;
 
-        if (l < heap->size && heap->array[l] < heap->array[smallest]) {
+        if (l < heap->size && heap->array[l]->value < heap->array[smallest]->value) {
             smallest = l;
         }
 
-        if (r < heap->size && heap->array[r] < heap->array[smallest]) {
+        if (r < heap->size && heap->array[r]->value < heap->array[smallest]->value) {
             smallest = r;
         }
 

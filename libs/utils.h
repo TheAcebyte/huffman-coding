@@ -5,6 +5,8 @@ typedef struct TreeNode {
     int value;
 } TreeNode;
 
+void printMe();
+
 void swap(TreeNode** array, int i, int j);
 
 #endif

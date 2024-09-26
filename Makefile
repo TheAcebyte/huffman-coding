@@ -1,17 +1,16 @@
-VPATHS=libs
-
-SRCS = $(wildcard *.c)
-OBJS = $(SRCS:.c=.o)
-DEPS = $(wildcard *.h)
+DIR = libs
 CC = gcc
+CFLAGS = -I$(DIR) -c
 
 all: output
 
-output: $(OBJS)
-	$(CC) -o $@ $^
+output: main.o
+	$(MAKE) -C $(DIR) all
+	$(CC) $^ $(DIR)/*.o -o main
 
-%.o: %.c $(DEPS)
-	$(CC) -c $< -o $@
+main.o: main.c
+	$(CC) $(CFLAGS) $^
 
 clean:
-	del *.o output.exe
+	$(MAKE) -C $(DIR) clean
+	del *.o main.exe
