@@ -1,10 +1,11 @@
 #include <stdlib.h>
-#include <stddef.h>
+#include <stdint.h>
 #include <assert.h>
+#include "huffman_tree.h"
 #include "utils.h"
 #include "priority_queue.h"
 
-MinHeap* heap_create(TreeNode** array, size_t capacity, size_t size) {
+MinHeap* heap_create(TreeNode** array, uint8_t capacity, uint8_t size) {
     MinHeap* heap = malloc(sizeof(MinHeap));
     assert(heap != NULL);
 
@@ -44,7 +45,7 @@ void heap_heapify(MinHeap* heap) {
 }
 
 void heap_siftup(MinHeap* heap, int i) {
-    while (heap->array[i]->value < heap->array[i / 2]->value) {
+    while (heap->array[i]->count < heap->array[i / 2]->count) {
         swap(heap->array, i, i / 2);
         i = i / 2;
     }
@@ -56,11 +57,11 @@ void heap_siftdown(MinHeap* heap, int i) {
         int l = 2 * i + 1;
         int r = 2 * i + 2;
 
-        if (l < heap->size && heap->array[l]->value < heap->array[smallest]->value) {
+        if (l < heap->size && heap->array[l]->count < heap->array[smallest]->count) {
             smallest = l;
         }
 
-        if (r < heap->size && heap->array[r]->value < heap->array[smallest]->value) {
+        if (r < heap->size && heap->array[r]->count < heap->array[smallest]->count) {
             smallest = r;
         }
 

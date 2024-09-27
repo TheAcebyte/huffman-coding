@@ -1,9 +1,6 @@
 #include <stdio.h>
+#include "huffman_tree.h"
 #include "utils.h"
-
-void printMe() {
-    printf("Yo");
-}
 
 void swap(TreeNode** array, int i, int j) {
     TreeNode* temp = array[i];

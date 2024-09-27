@@ -1,16 +1,17 @@
 #ifndef PRIORITY_QUEUE_H
 #define PRIORITY_QUEUE_H
 
-#include <stddef.h>
+#include <stdint.h>
+#include "huffman_tree.h"
 #include "utils.h"
 
 typedef struct MinHeap {
     TreeNode** array;
-    size_t capacity;
-    size_t size;
+    uint8_t capacity;
+    uint8_t size;
 } MinHeap;
 
-MinHeap* heap_create(TreeNode** array, size_t capacity, size_t size);
+MinHeap* heap_create(TreeNode** array, uint8_t capacity, uint8_t size);
 
 void heap_free(MinHeap* heap);
 

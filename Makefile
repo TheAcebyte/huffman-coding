@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Ilib -c
+CFLAGS = -Ilib -Wall
 
 LIBS = $(wildcard lib/*.c)
 OBJS= $(patsubst lib/%.c,build/%.o,$(LIBS)) build/main.o
@@ -14,9 +14,6 @@ build/main.o: src/main.c
 
 build/%.o: lib/%.c lib/%.h
 	$(CC) -c $< -o $@
-
-run: build
-	./bin/main
 
 clean: clean-windows
 

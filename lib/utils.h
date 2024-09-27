@@ -1,11 +1,7 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-typedef struct TreeNode {
-    int value;
-} TreeNode;
-
-void printMe();
+#include "huffman_tree.h"
 
 void swap(TreeNode** array, int i, int j);
 
