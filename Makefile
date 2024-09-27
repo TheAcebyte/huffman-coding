@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -I../lib -c
+CFLAGS = -Ilib -c
 
 # LIBS = $(wildcard lib/*.c)
 LIBS = utils.c
@@ -24,7 +24,7 @@ run: build
 clean: clean-windows
 
 clean-linux:
-	rm -f ./bin/* ./build/*
+	rm -f bin/* build/*
 
 clean-windows:
-	del /S bin/* build/*
+	del /S /Q bin\* build\*
