@@ -1,13 +1,10 @@
 CC = gcc
 CFLAGS = -Ilib -c
 
-# LIBS = $(wildcard lib/*.c)
-LIBS = utils.c
+LIBS = $(wildcard lib/*.c)
+OBJS= $(patsubst lib/%.c,build/%.o,$(LIBS)) build/main.o
 
-# $(patsubst lib/%.c,build/%.o,$(LIBS))
-OBJS = build/utils.o build/main.o
-
-all: run
+all: build
 
 build: $(OBJS)
 	$(CC) build/*.o -o bin/main

@@ -2,14 +2,14 @@
 #include <stddef.h>
 #include <assert.h>
 #include "utils.h"
-#include "priority-queue.h"
+#include "priority_queue.h"
 
-MinHeap* heap_create(TreeNode** array, size_t size) {
+MinHeap* heap_create(TreeNode** array, size_t capacity, size_t size) {
     MinHeap* heap = malloc(sizeof(MinHeap));
     assert(heap != NULL);
 
     heap->array = array;
-    heap->capacity = size;
+    heap->capacity = capacity;
     heap->size = size;
 
     return heap;

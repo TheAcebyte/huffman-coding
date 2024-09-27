@@ -10,7 +10,7 @@ typedef struct MinHeap {
     size_t size;
 } MinHeap;
 
-MinHeap* heap_create(TreeNode** array, size_t size);
+MinHeap* heap_create(TreeNode** array, size_t capacity, size_t size);
 
 void heap_free(MinHeap* heap);
 
