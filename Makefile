@@ -2,8 +2,6 @@ DIR = libs
 CC = gcc
 CFLAGS = -I$(DIR) -c
 
-all: output
-
 output: main.o
 	$(MAKE) -C $(DIR) all
 	$(CC) $^ $(DIR)/*.o -o main
@@ -11,6 +9,11 @@ output: main.o
 main.o: main.c
 	$(CC) $(CFLAGS) $^
 
+build:
+	$(CC) $(BUILD)/*.o -o $(BIN)/output
+
+run:
+	./bin/output
+
 clean:
-	$(MAKE) -C $(DIR) clean
-	del *.o main.exe
+	del $(BUILD)/.o $(BIN)./output
