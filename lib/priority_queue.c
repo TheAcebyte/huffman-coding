@@ -1,3 +1,4 @@
+#include <stdio.h> // remove this
 #include <stdlib.h>
 #include <stdint.h>
 #include <assert.h>
