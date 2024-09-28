@@ -68,6 +68,18 @@ void code_table_free(CodePoint** table) {
     }
 }
 
+void code_table_print(CodePoint** table) {
+    for (int i = 0; i < 128; i++) {
+        if (table[i] != NULL) {
+            printf("CHAR %c\n", i);
+            printf("|- ASCII: %d\n", i);
+            printf("|- COUNT: %d\n", table[i]->count);
+            printf("|- CODE: ");
+            print_n_bits(&(table[i]->code), table[i]->count);
+        }
+    }
+}
+
 void encode(char* text) {
     TreeNode* counter[128];
     CodePoint* table[128];
@@ -79,14 +91,9 @@ void encode(char* text) {
     for (int i = 0; i < 128; i++) {
         table[i] = NULL;
     }
-    code_table_build(table, root, &code, 0);
 
-    for (int i = 0; i < 128; i++) {
-        if (table[i] != NULL) {
-            printf("%c %d ", i, table[i]->count);
-            print_bits(&(table[i]->code));
-        }
-    }
+    code_table_build(table, root, &code, 0);
+    code_table_print(table);
 
     code_table_free(table);
     huffman_tree_free(root);

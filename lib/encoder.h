@@ -18,6 +18,8 @@ void code_table_build(CodePoint** table, TreeNode* node, uint128_t* code, uint8_
 
 void code_table_free(CodePoint** table);
 
+void code_table_print(CodePoint** table);
+
 void encode(char* text);
 
 #endif
