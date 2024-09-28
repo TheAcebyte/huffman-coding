@@ -42,7 +42,7 @@ CodePoint* code_point_create() {
     return point;
 }
 
-void code_table_build(CodePoint** table, TreeNode* node, uint64_t* code, uint8_t depth) {
+void code_table_build(CodePoint** table, TreeNode* node, uint128_t* code, uint8_t depth) {
     if (node != NULL) {
         if (node->character != EOF) {
             table[node->character] = code_point_create();
@@ -71,7 +71,7 @@ void code_table_free(CodePoint** table) {
 void encode(char* text) {
     TreeNode* counter[128];
     CodePoint* table[128];
-    uint64_t code = 0;
+    uint128_t code = 0;
 
     uint8_t size = count_chars(text, counter);
     TreeNode* root = huffman_tree_build(counter, size);

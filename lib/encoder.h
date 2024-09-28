@@ -7,14 +7,14 @@
 
 typedef struct CodePoint {
     uint8_t count;
-    uint64_t code;
+    uint128_t code;
 } CodePoint;
 
 uint8_t count_chars(char* text, TreeNode** counter);
 
 CodePoint* code_point_create();
 
-void code_table_build(CodePoint** table, TreeNode* node, uint64_t* code, uint8_t depth);
+void code_table_build(CodePoint** table, TreeNode* node, uint128_t* code, uint8_t depth);
 
 void code_table_free(CodePoint** table);
 
