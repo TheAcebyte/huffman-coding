@@ -1,10 +1,10 @@
 #ifndef ENCODER_H
 #define ENCODER_H
 
-#define METADATA_SIZE 6
-#define METADATA_TOTAL_BITS 32
-#define METADATA_TREE_BITS 12
-#define METADATA_LAST_BITS 4
+#define METADATA_SIZE 7
+#define METADATA_TOTAL_SIZE 4
+#define METADATA_TREE_SIZE 2
+#define METADATA_LAST_SIZE 1
 
 #include <stdint.h>
 #include "huffman_tree.h"
@@ -24,8 +24,6 @@ void code_table_build(CodePoint** table, TreeNode* node, uint128_t* code, uint8_
 void code_table_free(CodePoint** table);
 
 void code_table_print(CodePoint** table);
-
-void encode_metadata(BitWriter* writer, uint32_t total_size_bytes, uint16_t tree_size_bits, uint8_t remaining_bits);
 
 void encode_tree(TreeNode *node, BitWriter *writer);
 

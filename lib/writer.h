@@ -19,6 +19,4 @@ void bitwriter_free(BitWriter* writer);
 
 void bitwriter_write(BitWriter* writer, bool bit);
 
-void bitwriter_skip(BitWriter* writer, uint32_t bytes);
-
 #endif

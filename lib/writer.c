@@ -37,10 +37,3 @@ void bitwriter_write(BitWriter* writer, bool bit) {
         bitwriter_resize(writer);
     }
 }
-
-void bitwriter_skip(BitWriter* writer, uint32_t bytes) {
-    writer->index += bytes * 8;
-    while (writer->index >= writer->size * 8) {
-        bitwriter_resize(writer);
-    }
-}
