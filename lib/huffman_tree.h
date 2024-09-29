@@ -21,4 +21,6 @@ TreeNode* huffman_tree_build(TreeNode** counter, uint8_t size);
 
 void huffman_tree_free(TreeNode* node);
 
+size_t huffman_tree_serialize(TreeNode* node, uint8_t** buffer, uint8_t** shift, uint8_t* offset);
+
 #endif

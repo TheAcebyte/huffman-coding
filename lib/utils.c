@@ -10,13 +10,20 @@ void swap(TreeNode** array, int i, int j) {
     array[j] = temp;
 }
 
-bool get_bit(uint128_t* code, int i) {
-    return (*code >> i) & 1;
+bool get_bit(uint128_t code, int i) {
+    return (code >> i) & 1;
 }
 
-void print_n_bits(uint128_t* code, uint8_t n) {
+void print_nbits(uint128_t code, uint8_t n) {
     for (int i = n - 1; i >= 0; i--) {
         printf("%d", get_bit(code, i));
+    }
+    printf("\n");
+}
+
+void print_bits(uint8_t* code, uint8_t n) {
+    for (int i = n - 1; i >= 0; i--) {
+        printf("%d", (*code >> i) & 1);
     }
     printf("\n");
 }

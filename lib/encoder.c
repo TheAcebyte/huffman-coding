@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stddef.h>
 #include <stdint.h>
 #include <assert.h>
 #include "huffman_tree.h"
@@ -42,6 +43,12 @@ CodePoint* code_point_create() {
     return point;
 }
 
+void code_table_fill(CodePoint** table) {
+    for (int i = 0; i < 128; i++) {
+        table[i] = NULL;
+    }
+}
+
 void code_table_build(CodePoint** table, TreeNode* node, uint128_t* code, uint8_t depth) {
     if (node != NULL) {
         if (node->character != EOF) {
@@ -54,9 +61,8 @@ void code_table_build(CodePoint** table, TreeNode* node, uint128_t* code, uint8_
             code_table_build(table, node->left, code, depth + 1);
             *code |= 1;
             code_table_build(table, node->right, code, depth + 1);
+            *code >>= 1;
         }
-
-        *code >>= 1;
     }
 }
 
@@ -71,13 +77,45 @@ void code_table_free(CodePoint** table) {
 void code_table_print(CodePoint** table) {
     for (int i = 0; i < 128; i++) {
         if (table[i] != NULL) {
-            printf("CHAR %c\n", i);
-            printf("|- ASCII: %d\n", i);
-            printf("|- COUNT: %d\n", table[i]->count);
-            printf("|- CODE: ");
-            print_n_bits(&(table[i]->code), table[i]->count);
+            printf("CHAR %c (%3d) -> COUNT: %d, CODE: ", i, i, table[i]->count);
+            print_nbits(table[i]->code, table[i]->count);
         }
     }
+}
+
+size_t encode_text(char* text, uint8_t** buffer, CodePoint** table) {
+    size_t size = BUFFER_SIZE;
+    size_t count = 0;
+
+    uint8_t* shift = *buffer;
+    uint8_t offset = 0;
+
+    FILE* file = fopen(text, "r");
+    assert(file != NULL);
+
+    char ch;
+    while ((ch = fgetc(file)) != EOF) {
+        count += table[ch]->count;
+        if (count >= size) {
+            size *= 2;
+            *buffer = realloc(*buffer, size);
+            assert(*buffer != NULL);
+            shift = *buffer + count / 8;
+        }
+
+        *shift |= (table[ch]->code << offset);
+        shift += (offset + table[ch]->count) / 8;
+        offset = (offset + table[ch]->count) % 8;
+    }
+
+    return count;
+}
+
+size_t encode_tree(TreeNode* node, uint8_t** buffer) {
+    uint8_t* shift = *buffer;
+    uint8_t offset = 0;
+
+    return huffman_tree_serialize(node, buffer, &shift, &offset);
 }
 
 void encode(char* text) {
@@ -88,13 +126,19 @@ void encode(char* text) {
     uint8_t size = count_chars(text, counter);
     TreeNode* root = huffman_tree_build(counter, size);
 
-    for (int i = 0; i < 128; i++) {
-        table[i] = NULL;
-    }
-
+    code_table_fill(table);
     code_table_build(table, root, &code, 0);
-    code_table_print(table);
 
+    uint8_t* code_buffer = calloc(BUFFER_SIZE, 1);
+    assert(code_buffer != NULL);
+    size_t code_count = encode_text(text, &code_buffer, table);
+
+    uint8_t* key_buffer = calloc(BUFFER_SIZE, 1);
+    assert(key_buffer != NULL);
+    size_t key_count = encode_tree(root, &key_buffer);
+
+    free(key_buffer);
+    free(code_buffer);
     code_table_free(table);
     huffman_tree_free(root);
 }

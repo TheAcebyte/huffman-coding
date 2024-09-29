@@ -10,8 +10,10 @@ typedef unsigned __int128 uint128_t;
 
 void swap(TreeNode** array, int i, int j);
 
-bool get_bit(uint128_t* code, int i);
+bool get_bit(uint128_t code, int i);
 
-void print_n_bits(uint128_t* code, uint8_t n);
+void print_nbits(uint128_t code, uint8_t n);
+
+void print_bits(uint8_t* code, uint8_t n);
 
 #endif

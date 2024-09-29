@@ -1,6 +1,6 @@
 #include <stdio.h>
-#include <stddef.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <stddef.h>
 #include <assert.h>
 #include "huffman_tree.h"
@@ -26,13 +26,13 @@ TreeNode* huffman_tree_build(TreeNode** counter, uint8_t size) {
     MinHeap* heap = heap_create(counter, 128, size);
     heap_heapify(heap);
 
+
     while (heap->size > 1) {
         TreeNode* left = heap_pop(heap);
         TreeNode* right = heap_pop(heap);
 
         TreeNode* node = huffman_tree_node_create(left->count + right->count, EOF, left, right);
         heap_push(heap, node);
-        printf("\n");
     }
 
     TreeNode* root = heap_pop(heap);
@@ -45,5 +45,16 @@ void huffman_tree_free(TreeNode* node) {
         huffman_tree_free(node->left);
         huffman_tree_free(node->right);
         huffman_tree_node_free(node);
+    }
+}
+
+size_t huffman_tree_serialize(TreeNode* node, uint8_t** buffer, uint8_t** shift, uint8_t* offset) {
+    if (node != NULL) {
+        if (node->character == EOF) {
+            return 9;
+        }
+        else {
+            return 1 + huffman_tree_serialize(node->left, buffer, shift, offset) + huffman_tree_serialize(node->right, buffer, shift, offset);
+        }
     }
 }
