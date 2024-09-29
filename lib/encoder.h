@@ -1,7 +1,8 @@
 #ifndef ENCODER_H
 #define ENCODER_H
 
-#define BUFFER_SIZE 1024
+#define CODE_BUFFER_SIZE 1024
+#define TREE_BUFFER_SIZE 256
 
 #include <stdint.h>
 #include "huffman_tree.h"
@@ -22,7 +23,7 @@ void code_table_free(CodePoint** table);
 
 void code_table_print(CodePoint** table);
 
-size_t encode_text(char* text, uint8_t** buffer, CodePoint** table);
+uint32_t encode_text(char* text, uint8_t** buffer, CodePoint** table);
 
 void encode(char* text);
 

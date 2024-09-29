@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <stddef.h>
 #include <stdint.h>
 #include <assert.h>
 #include "huffman_tree.h"
 #include "utils.h"
+#include "writer.h"
 #include "encoder.h"
 
 uint8_t count_chars(char* text, TreeNode** counter) {
@@ -83,9 +83,9 @@ void code_table_print(CodePoint** table) {
     }
 }
 
-size_t encode_text(char* text, uint8_t** buffer, CodePoint** table) {
-    size_t size = BUFFER_SIZE;
-    size_t count = 0;
+uint32_t encode_text(char* text, uint8_t** buffer, CodePoint** table) {
+    uint32_t size = CODE_BUFFER_SIZE;
+    uint32_t count = 0;
 
     uint8_t* shift = *buffer;
     uint8_t offset = 0;
@@ -111,11 +111,37 @@ size_t encode_text(char* text, uint8_t** buffer, CodePoint** table) {
     return count;
 }
 
-size_t encode_tree(TreeNode* node, uint8_t** buffer) {
-    uint8_t* shift = *buffer;
-    uint8_t offset = 0;
+uint8_t encode_tree(TreeNode* root, uint8_t* buffer) {
+    uint8_t size = 0;
+    uint8_t count = 0;
 
-    return huffman_tree_serialize(node, buffer, &shift, &offset);
+    TreeNode* stack[TREE_BUFFER_SIZE];
+    uint8_t length = 1;
+    stack[0] = root;
+
+    while (length > 0) {
+        TreeNode* node = stack[--length];
+
+        if (node->character != EOF) {
+            *buffer |= 1 << count;
+            count++;
+            *buffer |= node->character << count;
+            count += 8;
+        } 
+        else {
+            count++;
+        }
+
+        if (node->right != NULL) {
+            stack[length++] = node->right;
+        }
+
+        if (node->left != NULL) {
+            stack[length++] = node->left;
+        }
+    }
+
+    return count;
 }
 
 void encode(char* text) {
@@ -129,15 +155,17 @@ void encode(char* text) {
     code_table_fill(table);
     code_table_build(table, root, &code, 0);
 
-    uint8_t* code_buffer = calloc(BUFFER_SIZE, 1);
-    assert(code_buffer != NULL);
-    size_t code_count = encode_text(text, &code_buffer, table);
+    uint8_t* code_buffer = calloc(CODE_BUFFER_SIZE, 1);
+    uint32_t code_count = encode_text(text, &code_buffer, table);
 
-    uint8_t* key_buffer = calloc(BUFFER_SIZE, 1);
-    assert(key_buffer != NULL);
-    size_t key_count = encode_tree(root, &key_buffer);
+    // uint8_t tree_buffer[TREE_BUFFER_SIZE];
+    uint8_t* tree_buffer = calloc(TREE_BUFFER_SIZE, 1);
+    uint8_t tree_count = encode_tree(root, tree_buffer);
 
-    free(key_buffer);
+    code_table_print(table);
+    print_bits(code_buffer, code_count);
+
+    free(tree_buffer);
     free(code_buffer);
     code_table_free(table);
     huffman_tree_free(root);
