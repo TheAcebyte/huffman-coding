@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 #include <stdlib.h>
 #include <stdint.h>
 #include <assert.h>
@@ -32,6 +33,7 @@ uint8_t count_chars(char* text, TreeNode** counter) {
         }
     }
 
+    fclose(file);
     return size;
 }
 
@@ -87,11 +89,11 @@ void encode_metadata(BitWriter* writer, uint32_t total_size_bytes, uint16_t tree
         bitwriter_write(writer, (total_size_bytes >> i) & 1);
     }
 
-    for (int i = METADATA_TREE_BITS - 1; i >= 0; i--) {
+    for (int i = 0; i < METADATA_TREE_BITS; i++) {
         bitwriter_write(writer, (tree_size_bits >> i) & 1);
     }
 
-    for (int i = METADATA_REMAINING_BITS - 1; i >= 0; i--) {
+    for (int i = 0; i < METADATA_LAST_BITS; i++) {
         bitwriter_write(writer, (last_bits >> i) & 1);
     }
 }
@@ -123,12 +125,12 @@ void encode_text(char* text, BitWriter* writer, CodePoint** table) {
     }
 }
 
-void encode(char* text) {
+void encode(char* filename) {
     TreeNode* counter[128];
     CodePoint* table[128];
     uint128_t code = 0;
 
-    uint8_t size = count_chars(text, counter);
+    uint8_t size = count_chars(filename, counter);
     TreeNode* root = huffman_tree_build(counter, size);
 
     code_table_fill(table);
@@ -141,15 +143,29 @@ void encode(char* text) {
     encode_tree(root, writer);
     uint16_t tree_size_bits = writer->index - METADATA_SIZE * 8;
 
-    encode_text(text, writer, table);
+    encode_text(filename, writer, table);
     uint32_t total_size_bytes = writer->index / 8 + 1;
     uint8_t last_bits = writer->index % 8;
 
     writer->index = 0;
     encode_metadata(writer, total_size_bytes, tree_size_bits, last_bits);
 
-    FILE* file = fopen("output.bin", "wb");
-    fwrite(writer->buffer, 1, total_size_bytes, file);
+    char extension[] = ".bin";
+    char output[strlen(filename) + strlen(extension) + 1];
+
+    strcpy(output, filename);
+    output[strlen(filename) + strlen(extension)] = '\0';
+
+    for (int i = 0; i < strlen(extension); i++) {
+        output[strlen(filename) + i] = extension[i];
+    }
+
+    FILE* file = fopen(output, "wb");
+    fwrite(writer->buffer, total_size_bytes, 1, file);
+    fclose(file);
+
+    printf("%d\n", tree_size_bits);
+    print_bits(writer->buffer, 64);
 
     bitwriter_free(writer);
     code_table_free(table);

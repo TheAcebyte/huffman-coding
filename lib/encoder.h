@@ -4,7 +4,7 @@
 #define METADATA_SIZE 6
 #define METADATA_TOTAL_BITS 32
 #define METADATA_TREE_BITS 12
-#define METADATA_REMAINING_BITS 4
+#define METADATA_LAST_BITS 4
 
 #include <stdint.h>
 #include "huffman_tree.h"
