@@ -57,11 +57,10 @@ void code_table_build(CodePoint** table, TreeNode* node, uint128_t* code, uint8_
             table[node->character]->code = *code;
         } 
         else {
-            *code <<= 1;
             code_table_build(table, node->left, code, depth + 1);
-            *code |= 1;
+            *code |= 1 << depth;
             code_table_build(table, node->right, code, depth + 1);
-            *code >>= 1;
+            *code ^= 1 << depth;
         }
     }
 }
@@ -83,65 +82,45 @@ void code_table_print(CodePoint** table) {
     }
 }
 
-uint32_t encode_text(char* text, uint8_t** buffer, CodePoint** table) {
-    uint32_t size = CODE_BUFFER_SIZE;
-    uint32_t count = 0;
+void encode_metadata(BitWriter* writer, uint32_t total_size_bytes, uint16_t tree_size_bits, uint8_t last_bits) {
+    for (int i = METADATA_TOTAL_BITS - 1; i >= 0; i--) {
+        bitwriter_write(writer, (total_size_bytes >> i) & 1);
+    }
 
-    uint8_t* shift = *buffer;
-    uint8_t offset = 0;
+    for (int i = METADATA_TREE_BITS - 1; i >= 0; i--) {
+        bitwriter_write(writer, (tree_size_bits >> i) & 1);
+    }
 
+    for (int i = METADATA_REMAINING_BITS - 1; i >= 0; i--) {
+        bitwriter_write(writer, (last_bits >> i) & 1);
+    }
+}
+
+void encode_tree(TreeNode *node, BitWriter *writer) {
+    if (node->character != EOF) {
+        bitwriter_write(writer, 1);
+
+        for (int i = 0; i < 7; i++) {
+            bitwriter_write(writer, (node->character >> i) & 1);
+        }
+    }
+    else {
+        bitwriter_write(writer, 0);
+        encode_tree(node->left, writer);
+        encode_tree(node->right, writer);
+    }
+}
+
+void encode_text(char* text, BitWriter* writer, CodePoint** table) {
     FILE* file = fopen(text, "r");
     assert(file != NULL);
 
     char ch;
     while ((ch = fgetc(file)) != EOF) {
-        count += table[ch]->count;
-        if (count >= size) {
-            size *= 2;
-            *buffer = realloc(*buffer, size);
-            assert(*buffer != NULL);
-            shift = *buffer + count / 8;
-        }
-
-        *shift |= (table[ch]->code << offset);
-        shift += (offset + table[ch]->count) / 8;
-        offset = (offset + table[ch]->count) % 8;
-    }
-
-    return count;
-}
-
-uint8_t encode_tree(TreeNode* root, uint8_t* buffer) {
-    uint8_t size = 0;
-    uint8_t count = 0;
-
-    TreeNode* stack[TREE_BUFFER_SIZE];
-    uint8_t length = 1;
-    stack[0] = root;
-
-    while (length > 0) {
-        TreeNode* node = stack[--length];
-
-        if (node->character != EOF) {
-            *buffer |= 1 << count;
-            count++;
-            *buffer |= node->character << count;
-            count += 8;
-        } 
-        else {
-            count++;
-        }
-
-        if (node->right != NULL) {
-            stack[length++] = node->right;
-        }
-
-        if (node->left != NULL) {
-            stack[length++] = node->left;
+        for (int i = 0; i < table[ch]->count; i++) {
+            bitwriter_write(writer, (table[ch]->code >> i) & 1);
         }
     }
-
-    return count;
 }
 
 void encode(char* text) {
@@ -154,19 +133,25 @@ void encode(char* text) {
 
     code_table_fill(table);
     code_table_build(table, root, &code, 0);
-
-    uint8_t* code_buffer = calloc(CODE_BUFFER_SIZE, 1);
-    uint32_t code_count = encode_text(text, &code_buffer, table);
-
-    // uint8_t tree_buffer[TREE_BUFFER_SIZE];
-    uint8_t* tree_buffer = calloc(TREE_BUFFER_SIZE, 1);
-    uint8_t tree_count = encode_tree(root, tree_buffer);
-
     code_table_print(table);
-    print_bits(code_buffer, code_count);
 
-    free(tree_buffer);
-    free(code_buffer);
+    BitWriter* writer = bitwriter_create();
+    bitwriter_skip(writer, METADATA_SIZE);
+
+    encode_tree(root, writer);
+    uint16_t tree_size_bits = writer->index - METADATA_SIZE * 8;
+
+    encode_text(text, writer, table);
+    uint32_t total_size_bytes = writer->index / 8 + 1;
+    uint8_t last_bits = writer->index % 8;
+
+    writer->index = 0;
+    encode_metadata(writer, total_size_bytes, tree_size_bits, last_bits);
+
+    FILE* file = fopen("output.bin", "wb");
+    fwrite(writer->buffer, 1, total_size_bytes, file);
+
+    bitwriter_free(writer);
     code_table_free(table);
     huffman_tree_free(root);
 }

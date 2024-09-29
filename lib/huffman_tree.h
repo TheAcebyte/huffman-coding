@@ -2,6 +2,7 @@
 #define HUFFMAN_TREE_H
 
 #include <stdint.h>
+#include "writer.h"
 
 struct TreeNode {
     uint32_t count;

@@ -15,15 +15,19 @@ bool get_bit(uint128_t code, int i) {
 }
 
 void print_nbits(uint128_t code, uint8_t n) {
-    for (int i = n - 1; i >= 0; i--) {
+    for (int i = 0; i < n; i++) {
         printf("%d", get_bit(code, i));
     }
     printf("\n");
 }
 
+bool get_bits(uint8_t* code, int i) {
+    return (code[i / 8] >> (7 - i % 8)) & 1;
+}
+
 void print_bits(uint8_t* code, uint8_t n) {
-    for (int i = n - 1; i >= 0; i--) {
-        printf("%d", (*code >> i) & 1);
+    for (int i = 0; i < n; i++) {
+        printf("%d", get_bits(code, i));
     }
     printf("\n");
 }

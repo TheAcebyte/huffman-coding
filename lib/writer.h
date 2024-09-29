@@ -2,6 +2,7 @@
 #define WRITER_H
 #define BUFFER_SIZE 1024
 
+#include <stdbool.h>
 #include <stdint.h>
 
 typedef struct BitWriter {
@@ -12,10 +13,12 @@ typedef struct BitWriter {
 
 BitWriter* bitwriter_create();
 
+void bitwriter_resize(BitWriter* writer);
+
+void bitwriter_free(BitWriter* writer);
+
 void bitwriter_write(BitWriter* writer, bool bit);
 
 void bitwriter_skip(BitWriter* writer, uint32_t bytes);
-
-void bitwriter_free(BitWriter* writer);
 
 #endif
