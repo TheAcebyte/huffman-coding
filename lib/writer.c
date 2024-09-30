@@ -27,12 +27,21 @@ void bitwriter_free(BitWriter* writer) {
     free(writer);
 }
 
-void bitwriter_write(BitWriter* writer, bool bit) {
+void bitwriter_write_bit(BitWriter* writer, bool bit) {
     if (bit) {
         writer->buffer[writer->index / 8] |= 1 << (7 - writer->index % 8);
     }
 
     writer->index++;
+    if (writer->index >= writer->size * 8) {
+        bitwriter_resize(writer);
+    }
+}
+
+void bitwriter_write_byte(BitWriter* writer, char byte) {
+    writer->buffer[writer->index / 8] = byte;
+
+    writer->index = (writer->index / 8) * 8 + 8;
     if (writer->index >= writer->size * 8) {
         bitwriter_resize(writer);
     }

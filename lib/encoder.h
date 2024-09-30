@@ -2,8 +2,7 @@
 #define ENCODER_H
 
 #define METADATA_SIZE 7
-#define METADATA_TOTAL_SIZE 4
-#define METADATA_TREE_SIZE 2
+#define METADATA_FILE_SIZE 4
 #define METADATA_LAST_SIZE 1
 
 #include <stdint.h>

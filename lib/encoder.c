@@ -86,14 +86,14 @@ void code_table_print(CodePoint** table) {
 
 void encode_tree(TreeNode *node, BitWriter *writer) {
     if (node->character != EOF) {
-        bitwriter_write(writer, 1);
+        bitwriter_write_bit(writer, 1);
 
         for (int i = 0; i < 7; i++) {
-            bitwriter_write(writer, (node->character >> i) & 1);
+            bitwriter_write_bit(writer, (node->character >> i) & 1);
         }
     }
     else {
-        bitwriter_write(writer, 0);
+        bitwriter_write_bit(writer, 0);
         encode_tree(node->left, writer);
         encode_tree(node->right, writer);
     }
@@ -106,7 +106,7 @@ void encode_text(char* text, BitWriter* writer, CodePoint** table) {
     char ch;
     while ((ch = fgetc(file)) != EOF) {
         for (int i = 0; i < table[ch]->count; i++) {
-            bitwriter_write(writer, (table[ch]->code >> i) & 1);
+            bitwriter_write_bit(writer, (table[ch]->code >> i) & 1);
         }
     }
 }
@@ -124,12 +124,10 @@ void encode(char* filename) {
     code_table_print(table);
 
     BitWriter* writer = bitwriter_create();
-
     encode_tree(root, writer);
-    uint16_t tree_size_bits = writer->index;
-
     encode_text(filename, writer, table);
-    uint32_t total_size_bytes = METADATA_SIZE + writer->index / 8 + 1;
+
+    uint32_t file_size_bytes = METADATA_SIZE + writer->index / 8 + 1;
     uint8_t last_bits = writer->index % 8;
 
     char extension[] = ".bin";
@@ -143,10 +141,9 @@ void encode(char* filename) {
     }
 
     FILE* file = fopen(output_name, "wb");
-    fwrite(&total_size_bytes, METADATA_TOTAL_SIZE, 1, file);
-    fwrite(&tree_size_bits, METADATA_TREE_SIZE, 1, file);
+    fwrite(&file_size_bytes, METADATA_FILE_SIZE, 1, file);
     fwrite(&last_bits, METADATA_LAST_SIZE, 1, file);
-    fwrite(writer->buffer, total_size_bytes - METADATA_SIZE, 1, file);
+    fwrite(writer->buffer, file_size_bytes - METADATA_SIZE, 1, file);
     fclose(file);
 
     bitwriter_free(writer);

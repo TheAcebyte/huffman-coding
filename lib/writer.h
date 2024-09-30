@@ -17,6 +17,8 @@ void bitwriter_resize(BitWriter* writer);
 
 void bitwriter_free(BitWriter* writer);
 
-void bitwriter_write(BitWriter* writer, bool bit);
+void bitwriter_write_bit(BitWriter* writer, bool bit);
+
+void bitwriter_write_byte(BitWriter* writer, char byte);
 
 #endif

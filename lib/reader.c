@@ -21,5 +21,7 @@ void bitreader_free(BitReader* reader) {
 }
 
 bool bitreader_read(BitReader* reader) {
-    return (reader->buffer[reader->index / 8] >> (7 - reader->index % 8)) & 1;
+    bool bit = (reader->buffer[reader->index / 8] >> (7 - reader->index % 8)) & 1;
+    reader->index++;
+    return bit;
 }
