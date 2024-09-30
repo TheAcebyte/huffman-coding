@@ -23,7 +23,6 @@ make
 >
 > The above command deletes `test/foo.txt` after producing `test/foo.bin`.
 >
->
 > To decode `test/foo.bin`, you would run:
 > ```
 > ./main encode test/foo.bin -d
