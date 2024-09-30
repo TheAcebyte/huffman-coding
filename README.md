@@ -1,6 +1,6 @@
 # Huffman Coding
 ## About
-Lightweight implementation of Huffman's Encoding/Decoding Algorithm in **C**.
+Lightweight implementation of **Huffman Coding Algorithm** in **C**.
 
 ## Installation
 Run the following commands in the terminal:
@@ -29,8 +29,6 @@ make
 > ```
 >
 > The above command would decode `test/foo.bin` back to `test/foo.txt`, as well as delete it.
-
-The above command
 
 ## License
 You may redistribute or modify this project under the [**MIT** license](LICENSE).
