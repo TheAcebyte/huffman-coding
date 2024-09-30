@@ -21,4 +21,5 @@ clean-linux:
 	rm -f *.out build/*
 
 clean-windows:
-	del /S /Q *.exe build\*
+	del /S /Q *.exe
+	del /S /Q build\*

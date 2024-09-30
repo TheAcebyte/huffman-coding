@@ -34,7 +34,7 @@ int main(int argc, char** argv) {
         strncpy(output_file + index, ".txt", 5);
         printf("Starting decompression...\n");
         decode(input_file, output_file);
-        printf("Successfully decompressed %s.\n", input_file);
+        printf("Successfully decompressed %s\n", input_file);
     }
     else {
         return 1;
@@ -44,6 +44,7 @@ int main(int argc, char** argv) {
         char* flag = argv[3];
         assert(strcmp(flag, "-d") == 0);
         assert(remove(input_file) == 0);
+        printf("Successfully deleted %s\n", input_file);
     }
 
     return 0;
