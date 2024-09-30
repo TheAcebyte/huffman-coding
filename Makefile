@@ -18,8 +18,8 @@ build/%.o: lib/%.c lib/%.h
 clean: clean-linux
 
 clean-linux:
-	rm -f *.out build/*
+	rm -f *.out build/*.o
 
 clean-windows:
 	del /S /Q *.exe
-	del /S /Q build\*
+	del /S /Q build\*.o

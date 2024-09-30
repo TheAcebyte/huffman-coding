@@ -3,8 +3,8 @@
 #include <stdint.h>
 #include <assert.h>
 #include "huffman_tree.h"
-#include "utils.h"
 #include "priority_queue.h"
+#include "utils.h"
 
 MinHeap* heap_create(TreeNode** array, uint8_t capacity, uint8_t size) {
     MinHeap* heap = malloc(sizeof(MinHeap));

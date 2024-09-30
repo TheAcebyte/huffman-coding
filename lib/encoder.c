@@ -4,9 +4,9 @@
 #include <stdint.h>
 #include <assert.h>
 #include "huffman_tree.h"
-#include "utils.h"
-#include "writer.h"
 #include "encoder.h"
+#include "writer.h"
+#include "utils.h"
 
 uint8_t count_chars(char* text, TreeNode** counter) {
     FILE* file = fopen(text, "r");

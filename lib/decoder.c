@@ -3,10 +3,10 @@
 #include <stdint.h>
 #include <assert.h>
 #include "huffman_tree.h"
-#include "reader.h"
-#include "writer.h"
 #include "encoder.h"
 #include "decoder.h"
+#include "reader.h"
+#include "writer.h"
 #include "utils.h"
 
 TreeNode* decode_tree(BitReader* reader) {

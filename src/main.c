@@ -2,9 +2,9 @@
 #include <string.h>
 #include <stdint.h>
 #include <assert.h>
-#include "utils.h"
 #include "encoder.h"
 #include "decoder.h"
+#include "utils.h"
 
 int main(int argc, char** argv) {
     assert(argc == 3 || argc == 4);
