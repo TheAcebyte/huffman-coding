@@ -16,19 +16,19 @@ make
 ```
 - `-d`: optional flag to delete the input file after compression/decompression.
 
-> To encode a file, say `test/foo.txt` for example, run the following:
+> To encode a file, say `test/foo.txt`, you would run:
 > ```
 > ./main encode test/foo.txt -d
 > ```
 >
-> The above command would encode `test/foo.txt` into `test/foo.bin`, as well as delete it.
+> The above command deletes `test/foo.txt` after producing `test/foo.bin`.
 >
 > To decode `test/foo.bin`, you would run:
 > ```
 > ./main encode test/foo.bin -d
 > ```
 >
-> The above command would decode `test/foo.bin` back to `test/foo.txt`, as well as delete it.
+> The above command deletes `test/foo.bin` after producing `test/foo.txt`.
 
 ## License
 You may redistribute or modify this project under the [**MIT** license](LICENSE).
