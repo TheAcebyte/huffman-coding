@@ -109,38 +109,29 @@ void encode_text(char* text, BitWriter* writer, CodePoint** table) {
             bitwriter_write_bit(writer, (table[ch]->code >> i) & 1);
         }
     }
+
+    fclose(file);
 }
 
-void encode(char* filename) {
+uint32_t encode(char* input_file, char* output_file) {
     TreeNode* counter[128];
     CodePoint* table[128];
     uint128_t code = 0;
 
-    uint8_t size = count_chars(filename, counter);
+    uint8_t size = count_chars(input_file, counter);
     TreeNode* root = huffman_tree_build(counter, size);
 
     code_table_fill(table);
     code_table_build(table, root, &code, 0);
-    code_table_print(table);
 
     BitWriter* writer = bitwriter_create();
     encode_tree(root, writer);
-    encode_text(filename, writer, table);
+    encode_text(input_file, writer, table);
 
     uint32_t file_size_bytes = METADATA_SIZE + writer->index / 8 + 1;
     uint8_t last_bits = writer->index % 8;
 
-    char extension[] = ".bin";
-    char output_name[strlen(filename) + strlen(extension) + 1];
-
-    strcpy(output_name, filename);
-    output_name[strlen(filename) + strlen(extension)] = '\0';
-
-    for (int i = 0; i < strlen(extension); i++) {
-        output_name[strlen(filename) + i] = extension[i];
-    }
-
-    FILE* file = fopen(output_name, "wb");
+    FILE* file = fopen(output_file, "wb");
     fwrite(&file_size_bytes, METADATA_FILE_SIZE, 1, file);
     fwrite(&last_bits, METADATA_LAST_SIZE, 1, file);
     fwrite(writer->buffer, file_size_bytes - METADATA_SIZE, 1, file);
@@ -149,4 +140,6 @@ void encode(char* filename) {
     bitwriter_free(writer);
     code_table_free(table);
     huffman_tree_free(root);
+
+    return file_size_bytes;
 }

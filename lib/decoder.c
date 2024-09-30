@@ -39,8 +39,8 @@ void decode_text(TreeNode* node, BitReader* reader, BitWriter* writer) {
     }
 }
 
-void decode(char* filename) {
-    FILE* file = fopen(filename, "rb");
+void decode(char* input_file, char* output_file) {
+    FILE* file = fopen(input_file, "rb");
     assert(file != NULL);
 
     uint32_t file_size_bytes;
@@ -60,12 +60,12 @@ void decode(char* filename) {
         decode_text(root, reader, writer);
     }
 
-    uint32_t output_file_size = writer->index / 8;
-    FILE* output_file = fopen("ok.txt", "w");
-    assert(output_file != NULL);
+    uint32_t written_file_size = writer->index / 8;
+    FILE* written_file = fopen(output_file, "w");
+    assert(written_file != NULL);
 
-    fwrite(writer->buffer, output_file_size, 1, output_file);
-    fclose(output_file);
+    fwrite(writer->buffer, written_file_size, 1, written_file);
+    fclose(written_file);
     fclose(file);
 
     bitwriter_free(writer);

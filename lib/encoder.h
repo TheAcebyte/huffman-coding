@@ -1,13 +1,13 @@
 #ifndef ENCODER_H
 #define ENCODER_H
 
-#define METADATA_SIZE 7
-#define METADATA_FILE_SIZE 4
-#define METADATA_LAST_SIZE 1
-
 #include <stdint.h>
 #include "huffman_tree.h"
 #include "utils.h"
+
+#define METADATA_SIZE 7
+#define METADATA_FILE_SIZE 4
+#define METADATA_LAST_SIZE 1
 
 typedef struct CodePoint {
     uint8_t count;
@@ -28,6 +28,6 @@ void encode_tree(TreeNode *node, BitWriter *writer);
 
 void encode_text(char* text, BitWriter* writer, CodePoint** table);
 
-void encode(char* text);
+uint32_t encode(char* input_file, char* output_file);
 
 #endif

@@ -7,7 +7,7 @@ OBJS= $(patsubst lib/%.c,build/%.o,$(LIBS)) build/main.o
 all: build
 
 build: $(OBJS)
-	$(CC) build/*.o -o bin/main
+	$(CC) build/*.o -o main
 
 build/main.o: src/main.c
 	$(CC) $(CFLAGS) -c $^ -o $@
@@ -15,10 +15,10 @@ build/main.o: src/main.c
 build/%.o: lib/%.c lib/%.h
 	$(CC) -c $< -o $@
 
-clean: clean-windows
+clean: clean-linux
 
 clean-linux:
-	rm -f bin/* build/*
+	rm -f *.out build/*
 
 clean-windows:
-	del /S /Q bin\* build\*
+	del /S /Q *.exe build\*
