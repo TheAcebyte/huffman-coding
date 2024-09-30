@@ -12,7 +12,7 @@ void swap(TreeNode** array, int i, int j) {
 }
 
 int search_string(char* string, char ch) {
-    for (int i = 0; i < strlen(string); i++) {
+    for (int i = strlen(string) - 1; i >= 0; i--) {
         if (string[i] == ch) {
             return i;
         }
