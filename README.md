@@ -25,7 +25,7 @@ make
 >
 > To decode `test/foo.bin`, you would run:
 > ```
-> ./main encode test/foo.bin -d
+> ./main decode test/foo.bin -d
 > ```
 >
 > The above command deletes `test/foo.bin` after producing `test/foo.txt`.
